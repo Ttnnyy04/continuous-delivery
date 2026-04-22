@@ -21,3 +21,11 @@ jobs:
         run: docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}" 
       - name: Push image to DockerHub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/posts:v1
+      - name: Ejercicio1
+        run: echo "tag=$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout)" >> $GITHUB_OUTPUT
+        id: project
+      - name: Generate Docker image
+        Run: |
+            mvn spring-boot:build-image -DskipTests
+                -Dspring-boot.build-image.imageName=
+                    ${{ secrets.DOCKERHUB_USERNAME }}/posts:${{ steps.project.outputs.tag }}
